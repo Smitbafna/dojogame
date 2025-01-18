@@ -4,6 +4,9 @@ use dojo_starter::models::{
 };
 
 
+use core::iter::{Iterator, IntoIterator};
+use core::nullable::NullableTrait;
+use core::dict::{Felt252Dict, Felt252DictEntryTrait};
 #[starknet::interface]
 trait RoomCreationTrait<T> {
     fn create_room(ref self: T) -> u32;
@@ -32,7 +35,7 @@ pub mod actions {
     use dojo::event::EventStorage;
     use dojo::world::WorldStorage;
     use dojo::world::IWorldDispatcherTrait;
-    use core::iter::{Iterator, IntoIterator};
+    
     #[derive(Drop, Serde, Debug)]
     #[dojo::event]
     pub struct PlayerJoined {
@@ -211,7 +214,6 @@ pub mod actions {
 
                     // Update the piece position
                     let mut updated_squares = game_state.board.squares;
-
                     for i in 0..updated_squares.len() {
                         if let Option::Some(existing_piece) = updated_squares[i] {
                             if *existing_piece.position == piece.position {
@@ -228,8 +230,9 @@ pub mod actions {
                                         );
                                 break;
                             }
-                        }
+                        } 
                     };
+                    
                     game_state.board.squares = updated_squares;
 
                     // Switch the turn to the next player
@@ -257,71 +260,7 @@ pub mod actions {
     }
 
 
-    //     fn make_move(
-    //     ref self: ContractState, room_id: u32, piece: PieceType, to_position: Position,
-    // ) {
-    //     let mut world = self.world_default();
-    //     let mut game_state: GameState = world.read_model(room_id);
-    //     let mut current_player: Player = world.read_model(room_id);
-    //     // Validate turn
-    //     let active_player = get_caller_address();
-    //     if active_player != current_player.address {
-    //         panic!("Not your turn!");
-    //     }
 
-    //         // Logic to validate and execute the move...
-    //     let mut piece_to_move = None;
-
-    //         // Find the piece on the board
-    //     for chess_piece in &mut game_state.board {
-    //         if chess_piece.piece_type == piece && chess_piece.color == current_player.color {
-    //             piece_to_move = Some(chess_piece);
-    //             break;
-    //         }
-    //     }
-
-    //         match piece_to_move {
-    //         Some(piece) => {
-    //             // Validate the move based on piece type
-    //             let valid_move = match piece.piece_type {
-    //                 PieceType::King => is_valid_king_move(piece.position, to_position),
-    //                 PieceType::Queen => is_valid_queen_move(piece.position, to_position),
-    //                 PieceType::Rook => is_valid_rook_move(piece.position, to_position),
-    //                 PieceType::Bishop => is_valid_bishop_move(piece.position, to_position),
-    //                 PieceType::Knight => is_valid_knight_move(piece.position, to_position),
-    //                 PieceType::Pawn => is_valid_pawn_move(piece.position, to_position),
-    //             };
-
-    //                 if !valid_move {
-    //                 panic!("Invalid move!");
-    //             }
-
-    //                 // Update the piece position
-    //             piece.position = to_position;
-    //             piece.has_moved = true;
-
-    //                 // Switch the turn to the next player
-    //             game_state.active_color = if current_player.color == PieceColor::White {
-    //                 PieceColor::Black
-    //             } else {
-    //                 PieceColor::White
-    //             };
-
-    //                 // Emit move event
-    //             world.emit_event(@MoveMade {
-    //                 room_id,
-    //                 piece,
-    //                 from: piece.position,
-    //                 to: to_position,
-    //             });
-
-    //                 // Write the updated game state
-    //             world.write_model(@game_state);
-    //         }
-    //         None => panic!("No piece of the specified type and color found!"),
-    //     }
-    // }
-    // fn can_move_to(ref self: ContractState,)
 
     #[generate_trait]
     impl InternalImpl of InternalTrait {
@@ -453,6 +392,7 @@ fn generate_chess960_board() -> Array<Option<ChessPiece>> {
 // }
 
 fn validate_rook_move(from: Position, game_state: @GameState) -> Array<Position> {
+    // use core::iter::{Iterator, IntoIterator};
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
     // Check left
@@ -504,6 +444,7 @@ fn validate_rook_move(from: Position, game_state: @GameState) -> Array<Position>
 
 
 fn validate_bishop_move(from: Position, game_state: @GameState) -> Array<Position> {
+    // use core::iter::{Iterator, IntoIterator};
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
     // Check top-left diagonal
@@ -562,6 +503,7 @@ fn validate_bishop_move(from: Position, game_state: @GameState) -> Array<Positio
 }
 
 fn validate_queen_move(from: Position, game_state: @GameState) -> Array<Position> {
+    // use core::iter::{Iterator, IntoIterator};
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
     // Rook-like moves (horizontal and vertical)
@@ -668,6 +610,8 @@ fn validate_queen_move(from: Position, game_state: @GameState) -> Array<Position
 fn validate_pawn_move(
     from: Position, game_state: @GameState, color: PieceColor,
 ) -> Array<Position> {
+
+    // use core::iter::{Iterator, IntoIterator};
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
     // Determine movement direction and starting row based on the color
@@ -694,20 +638,22 @@ fn validate_pawn_move(
 
 
 fn validate_king_move(from: Position, game_state: @GameState) -> Array<Position> {
+    // use core::iter::{Iterator, IntoIterator};
+
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
-    let directions: Array<(u32, u32)> = array![
-        (-1_u32, 0_u32), // Left
-        (1_u32, 0_u32), // Right
-        (0_u32, -1_u32), // Up
-        (0_u32, 1_u32), // Down
-        (-1_u32, -1_u32), // Top-left
-        (1_u32, -1_u32), // Top-right
-        (-1_u32, 1_u32), // Bottom-left
-        (1_u32, 1_u32) // Bottom-right
+    let directions: Array<(i32, i32)> = array![
+        (-1_i32, 0_i32),   // Left
+        (1_i32, 0_i32),    // Right
+        (0_i32, -1_i32),   // Up
+        (0_i32, 1_i32),    // Down
+        (-1_i32, -1_i32),  // Top-left
+        (1_i32, -1_i32),   // Top-right
+        (-1_i32, 1_i32),   // Bottom-left
+        (1_i32, 1_i32)     // Bottom-right
     ];
 
-    let directions_span: Span<(u32, u32)> = directions.span();
+    let directions_span: Span<(i32, i32)> = directions.span();
 
     let mut iter = directions_span.into_iter();
 
@@ -740,12 +686,13 @@ fn validate_king_move(from: Position, game_state: @GameState) -> Array<Position>
 fn validate_knight_move(from: Position, game_state: @GameState) -> Array<Position> {
     let mut valid_moves: Array<Position> = ArrayTrait::new();
 
-    // Define all possible knight move offsets
-    let knight_moves: Array<(u32, u32)> = array![
-        (2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1),
+     // Define all possible knight move offsets
+     let knight_moves: Array<(i32, i32)> = array![
+        (2, 1), (1, 2), (-1, 2), (-2, 1),
+        (-2, -1), (-1, -2), (1, -2), (2, -1)
     ];
 
-    let knight_moves_span: Span<(u32, u32)> = knight_moves.span();
+    let knight_moves_span: Span<(i32, i32)> = knight_moves.span();
 
     let mut iter = knight_moves_span.into_iter();
 
@@ -813,5 +760,8 @@ fn is_obstructed(pos: Position, game_state: @GameState) -> bool {
 //     };
 //     false // No obstruction found
 // }
+
+
+
 
 
