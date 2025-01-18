@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@cartridge/controller": "^0.5.5",
+    "dojo": "^1.17.3",
+    "starknet": "^6.11.0"
+  }
+}
