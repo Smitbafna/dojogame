@@ -1,6 +1,10 @@
 use starknet::ContractAddress;
 use starknet::storage::{Vec};
 
+use core::dict::Felt252Dict;
+use core::nullable::NullableTrait;
+use core::num::traits::WrappingAdd;
+
 #[derive(Drop, Serde, Debug)]
 #[dojo::model]
 pub struct Room {
@@ -105,7 +109,7 @@ impl MoveTypeIntoFelt252 of Into<MoveType, felt252> {
 }
 
 
-#[derive(Drop, Serde, Debug)]
+#[derive(Drop, Serde,Introspect, Debug)]
 #[dojo::model]
 pub struct ChessBoard {
     #[key]
@@ -150,132 +154,24 @@ pub struct Player {
     pub color: PieceColor, // White or Black
     pub address: ContractAddress,
 }
-// use starknet::ContractAddress;
 
-// #[derive(Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct Room {
-//     #[key]
-//     pub room_id: u32, // Unique identifier for the room.
-//     pub players: Array<ContractAddress>, // Addresses of the 2 players in the room.
-//     pub player_count: u8, // Current number of players in the room.
-//     pub game_started: bool, // Whether the game has started.
-// }
 
-// #[derive(Copy, Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct Moves {
-//     #[key]
-//     pub player_address: ContractAddress,
-//     pub remaining_nitro: u8,
-//     pub last_direction: Direction,
-//     pub is_hit: Obstacle,
-// }
 
-// #[derive(Copy, Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct Position {
-//     #[key]
-//     pub player: ContractAddress,
-//     pub vec: Vec2,
-//     pub distance_covered: u32,
-// }
 
-// #[derive(Copy, Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct Score {
-//     #[key]
-//     pub player_address: ContractAddress,
-//     pub last_check_point_score: u32,
-//     pub total_score: u32,
-// }
 
-// #[derive(Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct ObstacleHit {
-//     #[key]
-//     pub player_address: ContractAddress,
-//     pub obstacle: Array<Obstacle>,
-// }
 
-// #[derive(Drop, Serde, Debug)]
-// #[dojo::model]
-// pub struct DirectionsAvailable {
-//     #[key]
-//     pub player: ContractAddress,
-//     pub directions: Array<Direction>,
-// }
 
-// #[derive(Serde, Copy, Drop, Introspect, PartialEq, Debug)]
-// pub enum Obstacle {
-//     None,
-//     Left,
-//     Right,
-//     Center,
-// }
 
-// #[derive(Serde, Copy, Drop, Introspect, PartialEq, Debug)]
-// pub enum Direction {
-//     None,
-//     Left,
-//     Right,
-// }
 
-// #[derive(Copy, Drop, Serde, IntrospectPacked, Debug)]
-// pub struct Vec2 {
-//     pub x: u32,
-//     pub y: u32,
-// }
 
-// impl DirectionIntoFelt252 of Into<Direction, felt252> {
-//     fn into(self: Direction) -> felt252 {
-//         match self {
-//             Direction::None => 0,
-//             Direction::Left => 1,
-//             Direction::Right => 2,
-//         }
-//     }
-// }
 
-// impl ObstacleIntoFelt252 of Into<Obstacle, felt252> {
-//     fn into(self: Obstacle) -> felt252 {
-//         match self {
-//             Obstacle::None => 0,
-//             Obstacle::Left => 1,
-//             Obstacle::Right => 2,
-//             Obstacle::Center => 3,
-//         }
-//     }
-// }
 
-// #[generate_trait]
-// impl Vec2Impl of Vec2Trait {
-//     fn is_zero(self: Vec2) -> bool {
-//         if self.x - self.y == 0 {
-//             return true;
-//         }
-//         false
-//     }
 
-//     fn is_equal(self: Vec2, b: Vec2) -> bool {
-//         self.x == b.x && self.y == b.y
-//     }
-// }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::{Position, Vec2, Vec2Trait};
 
-//     #[test]
-//     fn test_vec_is_zero() {
-//         assert(Vec2Trait::is_zero(Vec2 { x: 0, y: 0 }), 'not zero');
-//     }
 
-//     #[test]
-//     fn test_vec_is_equal() {
-//         let position = Vec2 { x: 420, y: 0 };
-//         assert(position.is_equal(Vec2 { x: 420, y: 0 }), 'not equal');
-//     }
-// }
+
+
+
 
 
